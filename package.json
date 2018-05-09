@@ -1,0 +1,66 @@
+{
+  "name": "compose.promise",
+  "version": "1.0.0",
+  "description": "Like fp.compose, but for Promises.",
+  "license": "ISC",
+  "main": "index.js",
+  "keywords": [
+    "compose",
+    "promise",
+    "compose async",
+    "compose promise",
+    "functional",
+    "function composition",
+    "utility"
+  ],
+  "author": {
+    "name": "Jason James Pollman",
+    "email": "jasonjpollman@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JasonPollman/compose-promise.git"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test mocha ./test",
+    "test:cover": "NODE_ENV=test nyc mocha",
+    "compile:node": "NODE_ENV=production npx babel ./src/compose-promise.js -o ./dist/compose-promise.js",
+    "compile:browser": "NODE_ENV=browser npx babel ./src/compose-promise.js -o ./dist/compose-promise.min.js --source-maps",
+    "compile": "rm -rf ./dist && mkdir ./dist && npm run compile:node && npm run compile:browser",
+    "prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-istanbul": "^4.1.6",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-minify": "^0.4.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "babel-runtime": "^6.26.0",
+    "bluebird": "^3.5.1",
+    "chai": "^4.1.2",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.2"
+  },
+  "nyc": {
+    "sourceMap": false,
+    "instrument": false,
+    "check-coverage": true,
+    "lines": 99,
+    "statements": 99,
+    "functions": 99,
+    "branches": 99,
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ]
+  }
+}

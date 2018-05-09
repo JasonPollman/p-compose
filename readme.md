@@ -1,7 +1,7 @@
-# compose.promise
+# p-compose
 > Like fp.compose, but for Promises.
 
-**`compose.promise` has been designed to function like `fp.compose`.**
+**`p-compose` has been designed to function like `fp.compose`.**
 
 This smally utility library exports a function that composes the given sync/async functions. The rightmost
 function can have any arity; the remaining have a fixed arity of 1.
@@ -17,7 +17,7 @@ expected behavior:
 
 ## Usage
 ```js
-import compose from 'compose.promise';
+import compose from 'p-compose';
 
 const fetchUserById = (id) => {
   // Make some async db call or something...
@@ -40,24 +40,24 @@ getUserFullNameById(1).then(console.log); // Prints 'Chuck Norris'
 
 
 ## Browser Support
-`dist/compose.promise.min.js` is UMD and can be imported using require/browsers.
+`dist/p-compose.min.js` is UMD and can be imported using require/browsers.
 
 ```html
-<script src="dist/compose.promise.min.js"></script>
+<script src="dist/p-compose.min.js"></script>
 ```
 
-Note: `dist/compose.promise.js` is the main export used by node/npm.
+Note: `dist/p-compose.js` is the main export used by node/npm.
 
 
 ## Using Non-Native Promises
-You can use the static method `composePromise.using` to create a **new** `composePromise` method
+You can use the static method `using` to create a **new** `compose` method
 that will use the provided Promise library.
 
 ```js
-import ComposePromise from 'compose.promise';
+import pcompose from 'p-compose';
 
 // Creates a *new* function that will use bluebird promises.
-const compose = ComposePromise.using(bluebird);
+const compose = pcompose.using(bluebird);
 
 const doSomething = compose(a, b, ...);
 const bluebirdPromise = doSomething();

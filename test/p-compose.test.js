@@ -7,12 +7,12 @@ import sinon from 'sinon';
 import bluebird from 'bluebird';
 
 // Selects the file to tests per process.env.TEST_SOURCE
-const [composePromise, source] = (() => {
+const [compose, source] = (() => {
   switch (process.env.TEST_SOURCE) {
     /* eslint-disable global-require */
-    case 'dist': return [require('../dist/compose.promise'), 'dist'];
-    case 'browser': return [require('../dist/compose.promise.min'), 'browser'];
-    default: return [require('../src/compose.promise'), 'src'];
+    case 'dist': return [require('../dist/p-compose'), 'dist'];
+    case 'browser': return [require('../dist/p-compose.min'), 'browser'];
+    default: return [require('../src/p-compose'), 'src'];
     /* eslint-enable global-require */
   }
 })();
@@ -21,16 +21,16 @@ const noop = () => {};
 const delay = (ms = 100) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * Tests the given `composePromise` instance.
- * @param {function} compose The `composePromise` function to test.
+ * Tests the given `p-compose` instance.
+ * @param {function} composer The `p-compose` function to test.
  * @param {string=} prefix An optional prefix to differentiate tests.
  * @returns {undefined}
  */
-function testComposePromiseFunction(compose, prefix = '') {
+function testPromiseComposeFunction(composer, prefix = '') {
   const title = prefix ? `${prefix} -` : '';
 
   it(`${title} Should return a "noop" function if no methods are given`, async () => {
-    const composed = compose();
+    const composed = composer();
     expect(composed).to.be.a('function');
 
     const promise = composed();
@@ -39,7 +39,7 @@ function testComposePromiseFunction(compose, prefix = '') {
   });
 
   it(`${title} Should return a promise is given a single sync function`, async () => {
-    const composed = compose(noop);
+    const composed = composer(noop);
     expect(composed).to.be.a('function');
 
     const promise = composed();
@@ -52,7 +52,7 @@ function testComposePromiseFunction(compose, prefix = '') {
     const resolve = sinon.stub();
     const reject = () => Promise.reject(new Error('oops...'));
 
-    const composed = compose(resolve, resolve, reject);
+    const composed = composer(resolve, resolve, reject);
     expect(composed).to.be.a('function');
 
     try {
@@ -67,7 +67,7 @@ function testComposePromiseFunction(compose, prefix = '') {
     const resolve = sinon.stub();
     const reject = () => Promise.reject(new Error('oops...'));
 
-    const composed = compose(resolve, reject, resolve);
+    const composed = composer(resolve, reject, resolve);
     expect(composed).to.be.a('function');
 
     try {
@@ -82,7 +82,7 @@ function testComposePromiseFunction(compose, prefix = '') {
     const resolve = sinon.stub();
     const reject = () => Promise.reject(new Error('oops...'));
 
-    const composed = compose(reject, resolve, resolve);
+    const composed = composer(reject, resolve, resolve);
     expect(composed).to.be.a('function');
 
     try {
@@ -96,7 +96,7 @@ function testComposePromiseFunction(compose, prefix = '') {
   it(`${title} Should compose a set of synchronous functions (coercing them to a promise)`, async () => {
     const join = value => input => `${input}-${value}`;
 
-    const composed = compose(join(5), join(4), join(3), join(2), join(1));
+    const composed = composer(join(5), join(4), join(3), join(2), join(1));
     const promise = composed(0);
 
     expect(promise.then).to.be.a('function');
@@ -108,7 +108,7 @@ function testComposePromiseFunction(compose, prefix = '') {
     const pjoin = value => input => delay(50).then(() => join(value)(input));
 
     const start = Date.now();
-    const composed = compose(join(5), pjoin(4), join(3), pjoin(2), join(1));
+    const composed = composer(join(5), pjoin(4), join(3), pjoin(2), join(1));
     const promise = composed(0);
 
     expect(promise.then).to.be.a('function');
@@ -121,7 +121,7 @@ function testComposePromiseFunction(compose, prefix = '') {
     const pjoin = value => input => delay(50).then(() => join(value)(input));
 
     const start = Date.now();
-    const composed = compose(pjoin(5), join(4), pjoin(3), join(2), pjoin(1));
+    const composed = composer(pjoin(5), join(4), pjoin(3), join(2), pjoin(1));
     const promise = composed(0);
 
     expect(promise.then).to.be.a('function');
@@ -134,24 +134,24 @@ function testComposePromiseFunction(compose, prefix = '') {
     const join = array => Promise.resolve(array.join('-'));
     const toUpper = value => value.toUpperCase();
 
-    const composed = compose(toUpper, join, arrayify);
+    const composed = composer(toUpper, join, arrayify);
     expect(await composed('foo', 'bar', 'baz')).to.equal('FOO-BAR-BAZ');
   });
 
   it(`${title} Should reject if given a non-function (1)`, async () => {
-    assert.throws(() => compose(null), 'Expected a function');
+    assert.throws(() => composer(null), 'Expected a function');
   });
 
   it(`${title} Should reject if given a non-function (2)`, async () => {
-    assert.throws(() => compose(noop, noop, null), 'Expected a function');
+    assert.throws(() => composer(noop, noop, null), 'Expected a function');
   });
 
   it(`${title} Should reject if given a non-function (3)`, async () => {
-    assert.throws(() => compose(noop, {}, noop), 'Expected a function');
+    assert.throws(() => composer(noop, {}, noop), 'Expected a function');
   });
 
   it(`${title} Should reject if given a non-function (4)`, async () => {
-    assert.throws(() => compose('foo', noop, noop), 'Expected a function');
+    assert.throws(() => composer('foo', noop, noop), 'Expected a function');
   });
 
   describe('Example', () => {
@@ -164,7 +164,7 @@ function testComposePromiseFunction(compose, prefix = '') {
         },
       });
 
-      const getUserFullNameById = composePromise(
+      const getUserFullNameById = composer(
         user => `${user.name.first} ${user.name.last}`,
         fetchUserById,
       );
@@ -176,22 +176,22 @@ function testComposePromiseFunction(compose, prefix = '') {
 
 describe(`Testing compose-promise using "${source}"`, () => {
   it('Should have a static `using` method', () => {
-    expect(composePromise.using).to.be.a('function');
+    expect(compose.using).to.be.a('function');
   });
 
   // Run all tests against native Promises (using src)
-  testComposePromiseFunction(composePromise);
+  testPromiseComposeFunction(compose);
 
-  describe('composePromise.using', () => {
-    it('Should create a new composePromise function', () => {
-      expect(composePromise.using(Promise)).to.be.a('function');
-      expect(composePromise.using(Promise)).to.not.equal(composePromise);
+  describe('p-compose.using', () => {
+    it('Should create a new p-compose function', () => {
+      expect(compose.using(Promise)).to.be.a('function');
+      expect(compose.using(Promise)).to.not.equal(compose);
 
-      expect(composePromise.using(bluebird)).to.be.a('function');
-      expect(composePromise.using(bluebird)).to.not.equal(composePromise);
+      expect(compose.using(bluebird)).to.be.a('function');
+      expect(compose.using(bluebird)).to.not.equal(compose);
     });
 
     // Run all tests against the bluebird library
-    testComposePromiseFunction(composePromise.using(bluebird), 'Alternate library (bluebird)');
+    testPromiseComposeFunction(compose.using(bluebird), 'Alternate library (bluebird)');
   });
 });

@@ -14,7 +14,7 @@ const hasNonFunction = fnArray => fnArray.some(fn => typeof fn !== 'function');
  * returning functions. However, the returned function will always return a Promise.
  * @returns {function} A function composed using the ones provided.
  */
-const ComposePromiseFactory = Promise => (...fns) => {
+const PromiseComposeFactory = Promise => (...fns) => {
   if (fns.length === 0) return () => Promise.resolve();
   if (hasNonFunction(fns)) throw new TypeError('Expected a function');
 
@@ -26,5 +26,5 @@ const ComposePromiseFactory = Promise => (...fns) => {
   return (...args) => rest.reduce(promiseReducer, Promise.resolve().then(() => head(...args)));
 };
 
-module.exports = ComposePromiseFactory(Promise);
-module.exports.using = ComposePromiseFactory;
+module.exports = PromiseComposeFactory(Promise);
+module.exports.using = PromiseComposeFactory;

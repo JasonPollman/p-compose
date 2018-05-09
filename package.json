@@ -1,5 +1,5 @@
 {
-  "name": "compose.promise",
+  "name": "p-compose",
   "version": "1.0.0",
   "description": "Like fp.compose, but for Promises.",
   "license": "ISC",
@@ -25,13 +25,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/JasonPollman/compose.promise.git"
+    "url": "https://github.com/JasonPollman/p-compose.git"
   },
   "scripts": {
     "test": "NODE_ENV=test mocha ./test",
     "test:cover": "NODE_ENV=test nyc mocha",
-    "compile:node": "NODE_ENV=production npx babel ./src/compose.promise.js -o ./dist/compose.promise.js",
-    "compile:browser": "NODE_ENV=browser npx babel ./src/compose.promise.js -o ./dist/compose.promise.min.js --source-maps",
+    "compile:node": "NODE_ENV=production npx babel ./src/p-compose.js -o ./dist/p-compose.js",
+    "compile:browser": "NODE_ENV=browser npx babel ./src/p-compose.js -o ./dist/p-compose.min.js --source-maps",
     "compile": "rm -rf ./dist && mkdir ./dist && npm run compile:node && npm run compile:browser",
     "prepublish": "npm run compile"
   },

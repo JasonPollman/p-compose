@@ -3,15 +3,16 @@ import {
   expect,
 } from 'chai';
 
+import sinon from 'sinon';
 import bluebird from 'bluebird';
 
 // Selects the file to tests per process.env.TEST_SOURCE
 const [composePromise, source] = (() => {
   switch (process.env.TEST_SOURCE) {
     /* eslint-disable global-require */
-    case 'dist': return [require('../dist/compose-promise'), 'dist'];
-    case 'browser': return [require('../dist/compose-promise.min'), 'browser'];
-    default: return [require('../src/compose-promise'), 'src'];
+    case 'dist': return [require('../dist/compose.promise'), 'dist'];
+    case 'browser': return [require('../dist/compose.promise.min'), 'browser'];
+    default: return [require('../src/compose.promise'), 'src'];
     /* eslint-enable global-require */
   }
 })();
@@ -44,6 +45,52 @@ function testComposePromiseFunction(compose, prefix = '') {
     const promise = composed();
     expect(promise.then).to.be.a('function');
     expect(await promise).to.equal(undefined);
+  });
+
+
+  it(`${title} Should properly handle promise rejections (1)`, async () => {
+    const resolve = sinon.stub();
+    const reject = () => Promise.reject(new Error('oops...'));
+
+    const composed = compose(resolve, resolve, reject);
+    expect(composed).to.be.a('function');
+
+    try {
+      await composed();
+    } catch (e) {
+      expect(e.message).to.equal('oops...');
+      expect(resolve.callCount).to.equal(0);
+    }
+  });
+
+  it(`${title} Should properly handle promise rejections (2)`, async () => {
+    const resolve = sinon.stub();
+    const reject = () => Promise.reject(new Error('oops...'));
+
+    const composed = compose(resolve, reject, resolve);
+    expect(composed).to.be.a('function');
+
+    try {
+      await composed();
+    } catch (e) {
+      expect(e.message).to.equal('oops...');
+      expect(resolve.callCount).to.equal(1);
+    }
+  });
+
+  it(`${title} Should properly handle promise rejections (3)`, async () => {
+    const resolve = sinon.stub();
+    const reject = () => Promise.reject(new Error('oops...'));
+
+    const composed = compose(reject, resolve, resolve);
+    expect(composed).to.be.a('function');
+
+    try {
+      await composed();
+    } catch (e) {
+      expect(e.message).to.equal('oops...');
+      expect(resolve.callCount).to.equal(2);
+    }
   });
 
   it(`${title} Should compose a set of synchronous functions (coercing them to a promise)`, async () => {
@@ -105,6 +152,25 @@ function testComposePromiseFunction(compose, prefix = '') {
 
   it(`${title} Should reject if given a non-function (4)`, async () => {
     assert.throws(() => compose('foo', noop, noop), 'Expected a function');
+  });
+
+  describe('Example', () => {
+    it('Should work as expected', () => {
+      const fetchUserById = id => Promise.resolve({
+        id,
+        name: {
+          first: 'Chuck',
+          last: 'Norris',
+        },
+      });
+
+      const getUserFullNameById = composePromise(
+        user => `${user.name.first} ${user.name.last}`,
+        fetchUserById,
+      );
+
+      return getUserFullNameById(1).then(result => expect(result).to.equal('Chuck Norris'));
+    });
   });
 }
 

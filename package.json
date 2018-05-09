@@ -24,8 +24,8 @@
   "scripts": {
     "test": "NODE_ENV=test mocha ./test",
     "test:cover": "NODE_ENV=test nyc mocha",
-    "compile:node": "NODE_ENV=production npx babel ./src/compose-promise.js -o ./dist/compose-promise.js",
-    "compile:browser": "NODE_ENV=browser npx babel ./src/compose-promise.js -o ./dist/compose-promise.min.js --source-maps",
+    "compile:node": "NODE_ENV=production npx babel ./src/compose.promise.js -o ./dist/compose.promise.js",
+    "compile:browser": "NODE_ENV=browser npx babel ./src/compose.promise.js -o ./dist/compose.promise.min.js --source-maps",
     "compile": "rm -rf ./dist && mkdir ./dist && npm run compile:node && npm run compile:browser",
     "prepublish": "npm run compile"
   },
@@ -47,8 +47,10 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
+    "lodash": "^4.17.10",
     "mocha": "^5.1.1",
-    "nyc": "^11.7.2"
+    "nyc": "^11.7.2",
+    "sinon": "^5.0.7"
   },
   "nyc": {
     "sourceMap": false,

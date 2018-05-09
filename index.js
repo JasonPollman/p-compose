@@ -1,1 +1,1 @@
-module.exports = require('./dist/compose.promise.js');
+module.exports = require('./dist/p-compose.js');

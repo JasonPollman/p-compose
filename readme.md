@@ -9,7 +9,7 @@ function can have any arity; the remaining have a fixed arity of 1.
 
 ## Motivation
 There's a number of modules out there for Promise function composition, but they have slight differences in
-expected behvior:
+expected behavior:
 
 1. Most of them don't support unlimited arity to the rightmost function.
 1. Most of them don't support non-native Promise libraries.

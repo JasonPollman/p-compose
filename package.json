@@ -17,9 +17,15 @@
     "name": "Jason James Pollman",
     "email": "jasonjpollman@gmail.com"
   },
+  "contributors": [
+    {
+      "name": "Justin D. Fuller",
+      "email": "justindanielfuller@gmail.com"
+    }
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/JasonPollman/compose-promise.git"
+    "url": "https://github.com/JasonPollman/compose.promise.git"
   },
   "scripts": {
     "test": "NODE_ENV=test mocha ./test",
@@ -47,7 +53,6 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
-    "lodash": "^4.17.10",
     "mocha": "^5.1.1",
     "nyc": "^11.7.2",
     "sinon": "^5.0.7"

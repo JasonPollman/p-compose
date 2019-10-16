@@ -23,7 +23,7 @@ const PromiseComposeFactory = Promise => (...fns) => {
   const head = fns[0];
   const rest = fns.slice(1);
 
-  return (...args) => rest.reduce(promiseReducer, Promise.resolve().then(() => head(...args)));
+  return (...args) => rest.reduce(promiseReducer, Promise.resolve(head(...args)));
 };
 
 module.exports = PromiseComposeFactory(Promise);
